@@ -36,7 +36,7 @@ delete_old_resource_groups() {
 
 # Function to generate a random password
 generate_random_password() {
-    tr -dc 'A-Za-z0-9@#$' < /dev/urandom | head -c 20
+    tr -dc 'A-Za-z0-9@' < /dev/urandom | head -c 22
 }
 
 # Function to generate a valid VM name
