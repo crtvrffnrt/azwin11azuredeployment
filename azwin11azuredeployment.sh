@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # Function to display messages with colors
 display_message() {
     local message="$1"
@@ -63,7 +64,52 @@ configure_nsg_rules() {
         --destination-address-prefixes '*' \
         --destination-port-ranges '*' > /dev/null
 
-           esac
+    # Allow specific IP for RDP, SSH, WinRM
+    az network nsg rule create \
+        --resource-group "$resource_group" \
+        --nsg-name "$nsg_name" \
+        --name AllowInbound \
+        --priority 200 \
+        --direction Inbound \
+        --access Allow \
+        --protocol Tcp \
+        --source-address-prefixes "$allowed_ip" \
+        --source-port-ranges '*' \
+        --destination-address-prefixes '*' \
+        --destination-port-ranges 3389 22 5985 5986 > /dev/null
+}
+
+# Function to wait until VM is running
+wait_for_vm_to_be_running() {
+    local resource_group="$1"
+    local vm_name="$2"
+
+    while true; do
+        vm_state=$(az vm get-instance-view --resource-group "$resource_group" --name "$vm_name" --query "instanceView.statuses[?code=='PowerState/running'].code" -o tsv)
+        if [[ "$vm_state" == "PowerState/running" ]]; then
+            display_message "VM is running. Waiting for 30 seconds to ensure services are ready..." "yellow"
+            sleep 30
+            break
+        else
+            display_message "Waiting for VM to be in 'running' state..." "yellow"
+            sleep 10
+        fi
+    done
+}
+
+# Main script execution
+main() {
+    local allowed_ip=""
+
+    # Parse arguments
+    while getopts "r:" opt; do
+        case $opt in
+            r) allowed_ip="$OPTARG" ;;
+            *)
+                display_message "Invalid option provided. Use -r to specify the allowed IP range." "red"
+                exit 1
+                ;;
+        esac
     done
 
     # Validate allowed IP range
