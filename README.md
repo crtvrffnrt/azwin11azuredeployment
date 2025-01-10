@@ -1,7 +1,7 @@
 # Azure Windows 11 Deployment Script
 
 ## Overview
-This repository contains the `azwin11azuredeployment.sh` script, which simplifies the deployment of a Windows 11 Azure virtual machine. The script ensures that only specific IP addresses can access the VM via RDP and SSH. By default, your current public IP is used for access, and additional ranges can be specified as needed.
+This repository contains the `azwin11azuredeployment.sh` script, which simplifies the deployment of a Windows 11 Azure virtual machine. The script ensures that only specific IP addresses can access the VM via RDP and SSH.
 
 ---
 
