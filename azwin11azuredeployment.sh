@@ -56,34 +56,41 @@ configure_nsg_rules() {
     shift 2
     local allowed_ips=("$@")
 
-    # Allow specific IPs for RDP, SSH, WinRM
-    for ip in "${allowed_ips[@]}"; do
-        az network nsg rule create \
-            --resource-group "$resource_group" \
-            --nsg-name "$nsg_name" \
-            --name AllowInbound-${ip//\//_} \
-            --priority $((100 + RANDOM % 900)) \
-            --direction Inbound \
-            --access Allow \
-            --protocol Tcp \
-            --source-address-prefixes "$ip" \
-            --destination-port-ranges 3389 22 5985 5986 > /dev/null
-    done
+    # Deny all inbound traffic by default
+    az network nsg rule create \
+        --resource-group "$resource_group" \
+        --nsg-name "$nsg_name" \
+        --name DenyInbound \
+        --priority 2500 \
+        --direction Inbound \
+        --access Deny \
+        --protocol '*' \
+        --source-address-prefixes '*' \
+        --source-port-ranges '*' \
+        --destination-address-prefixes '*' \
+        --destination-port-ranges '*' > /dev/null
+
+    # Allow RDP, SSH, WinRM for each allowed IP
+    if [[ ${#allowed_ips[@]} -gt 0 ]]; then
+        for ip in "${allowed_ips[@]}"; do
+            az network nsg rule create \
+                --resource-group "$resource_group" \
+                --nsg-name "$nsg_name" \
+                --name AllowInbound-${ip//\//_} \
+                --priority $((200 + RANDOM % 100)) \
+                --direction Inbound \
+                --access Allow \
+                --protocol Tcp \
+                --source-address-prefixes "$ip" \
+                --source-port-ranges '*' \
+                --destination-address-prefixes '*' \
+                --destination-port-ranges 3389 22 5985 5986 > /dev/null
+        done
+    fi
 }
 
 # Function to delete the default RDP rule (if exists)
-delete_default_rdp_rule() {
-    local nsg_name="$1"
-    local resource_group="$2"
 
-    az network nsg rule list \
-        --resource-group "$resource_group" \
-        --nsg-name "$nsg_name" \
-        --query "[?name=='rdp']" -o tsv | while read -r rule; do
-        az network nsg rule delete --resource-group "$resource_group" --nsg-name "$nsg_name" --name "rdp" > /dev/null
-        display_message "Default NSG rule 'rdp' with priority 1000 deleted." "yellow"
-    done
-}
 
 # Main script execution
 main() {
@@ -124,15 +131,17 @@ main() {
         display_message "Failed to create resource group." "red"
         exit 1
     fi
-
+sleep 17
     # Create the VM
     az vm create \
         --resource-group "$resource_group" \
         --name "$vm_name" \
+        --nsg $nsg_name \
         --image "MicrosoftWindowsDesktop:windows11preview:win11-24h2-ent:latest" \
         --admin-username "adminuser" \
         --admin-password "$admin_password" \
         --public-ip-sku Standard > /dev/null
+        
 
     # Get the NSG name
     local nsg_name=$(az network nsg list --resource-group "$resource_group" --query "[0].name" -o tsv)
@@ -149,7 +158,19 @@ main() {
 
     # Get the public IP of the VM
     local public_ip=$(az network public-ip list --resource-group "$resource_group" --query "[0].ipAddress" -o tsv)
+sleep 30
+delete_default_rdp_rule() {
+    local nsg_name="$1"
+    local resource_group="$2"
 
+    az network nsg rule list \
+        --resource-group "$resource_group" \
+        --nsg-name "$nsg_name" \
+        --query "[?name=='rdp']" -o tsv | while read -r rule; do
+        az network nsg rule delete --resource-group "$resource_group" --nsg-name "$nsg_name" --name "rdp" > /dev/null
+        display_message "Default NSG rule 'rdp' with priority 1000 deleted." "yellow"
+    done
+}
     # Display the connection details
     display_message "Your Windows VM has been created successfully!" "green"
     echo "Connect to your VM using the following details:"
