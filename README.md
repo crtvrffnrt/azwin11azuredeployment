@@ -69,6 +69,5 @@ xfreerdp /v:13.84.245.178 /u:adminuser /p:"brf.5c2U)yQH33_-)*D=9ZQB" /cert:ignor
 Old resource groups created by this script are automatically deleted to keep your Azure environment organized. If you wish to disable this behavior, modify the script accordingly.
 
 ---
+![image](https://github.com/user-attachments/assets/46273c07-e789-4e9e-8c1a-6156c173b98c)
 
-## Disclaimer
-This script is provided "as-is" without warranty of any kind. Use at your own risk. Ensure proper security measures are in place when allowing access to your VM.
