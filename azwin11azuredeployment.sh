@@ -51,16 +51,17 @@ get_current_ip() {
 
 # Function to configure NSG rules
 configure_nsg_rules() {
-    local nsg_name="azwin11-${random_suffix}"
+    local nsg_name="$1"
     local resource_group="$2"
-    local allowed_ips=("$3")
+    shift 2
+    local allowed_ips=("$@")
 
     # Deny all inbound traffic by default
     az network nsg rule create \
         --resource-group "$resource_group" \
         --nsg-name "$nsg_name" \
-        --name DenyAllIn\
-        --priority 10000 \
+        --name DenyAllInbound \
+        --priority 1000 \
         --direction Inbound \
         --access Deny \
         --protocol "*" \
@@ -69,13 +70,13 @@ configure_nsg_rules() {
         --destination-address-prefixes "*" \
         --destination-port-ranges "*" > /dev/null
 
-    # Allow RDP for allowed IPs
+    # Allow specific IPs for RDP, SSH, WinRM
     for ip in "${allowed_ips[@]}"; do
         az network nsg rule create \
             --resource-group "$resource_group" \
             --nsg-name "$nsg_name" \
-            --name AllowRDP-${ip//\//_} \
-            --priority $((1000 + RANDOM % 100)) \
+            --name AllowInbound-${ip//\//_} \
+            --priority $((100 + RANDOM % 900)) \
             --direction Inbound \
             --access Allow \
             --protocol Tcp \
@@ -136,36 +137,4 @@ main() {
     # Get the NSG name
     local nsg_name=$(az network nsg list --resource-group "$resource_group" --query "[0].name" -o tsv)
     if [ -z "$nsg_name" ]; then
-        display_message "Failed to retrieve NSG name. Ensure NSG is created with the VM." "red"
-        exit 1
-    fi
-
-    # Configure NSG rules
-    configure_nsg_rules "$nsg_name" "$resource_group" "${allowed_ips[@]}"
-
-    # Get the public IP of the VM
-    local public_ip=$(az network public-ip list --resource-group "$resource_group" --query "[0].ipAddress" -o tsv)
-
-    # Display the connection details
-    display_message "Your Windows VM has been created successfully!" "green"
-    echo "Connect to your VM using the following details:"
-    echo "Public IP: $public_ip"
-    echo "Username: adminuser"
-    echo "Password: $admin_password"
-    echo "Allowed IP ranges: ${allowed_ips[*]}"
-    echo "Ports open: RDP (3389)"
-
-    # Generate PowerShell and Linux commands for connection
-    echo
-    echo "To connect from Windows (PowerShell):"
-    echo "cmdkey /generic:\"$public_ip\" /user:\"adminuser\" /pass:\"$admin_password\"; mstsc /v:$public_ip"
-    echo
-    echo "To connect from Linux (xfreerdp):"
-    echo "xfreerdp /v:$public_ip /u:adminuser /p:\"$admin_password\" /cert:ignore "
-    echo
-    display_message "Successfully deployed Windows 11 VM connect to with RDP and you can setup OpenSSH if you want" "green"
-    echo
-    echo "Good-Bye"
-}
-
-main "$@"
+        display_
