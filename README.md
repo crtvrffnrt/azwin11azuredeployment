@@ -6,7 +6,6 @@ This repository contains the `azwin11azuredeployment.sh` script, which simplifie
 ---
 
 ## Features
-- Automatically detects your current public IP and grants access for RDP and SSH.
 - Requried to specify Allowed IP ranges using the `-r` flag.
 - Automatically deletes old resource groups created by the script to maintain a clean Azure environment.
 
