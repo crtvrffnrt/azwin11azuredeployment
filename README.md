@@ -14,14 +14,26 @@ This repository contains the `azwin11azuredeployment.sh` script, which simplifie
 
 ## Usage
 ### Basic Usage
+## How to Use
+### Bash
+```
+az login --use-device-code && git clone https://github.com/crtvrffnrt/azwin11azuredeployment.git && chmod +x ./azsshconnect/azsshconnect.sh && ./azwin11azuredeployment/azwin11azuredeployment.sh
+"
+```
 Run the script to create a new Windows VM accessible only from your current public IP:
 
-```bash
-./azwin11azuredeployment.sh
+### Alternative from Azure Portal
+1. Login to Azure
+2. Open Azure CLI & switch to bash
 ```
+git clone https://github.com/crtvrffnrt/azwin11azuredeployment.git && chmod +x ./azwin11azuredeployment/azwin11azuredeployment.sh && ./azwin11azuredeployment/azwin11azuredeployment.sh -r "$yourPublicip/32"
+```
+3. Change your Public ip in $yourPublicip/32
+4. wait until vm is created and commands to copy will be presented
+5. run on your host PC powershell with provided command
 
-This will allow RDP and SSH access for your current public IP only (e.g., `203.0.113.45/32`).
 
+# Options
 ### Specify Additional IP Ranges
 You can allow access for both your current public IP and an additional range using the `-r` flag:
 
@@ -40,13 +52,6 @@ By default, Windows virtual machines do not have SSH enabled. To access the VM v
 1. Enable the SSH feature on the Windows VM after deployment.
 2. Configure the Windows Firewall to allow SSH traffic.
 
----
-
-## Prerequisites
-- Azure CLI installed and authenticated (`az login`).
-- Necessary permissions to create resource groups, virtual machines, and network security groups in Azure.
-
----
 
 ## Outputs
 After deployment, the script will display the following details:
