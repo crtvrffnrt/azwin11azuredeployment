@@ -1,6 +1,4 @@
-
 #!/bin/bash
-
 # Function to display messages with colors
 display_message() {
     local message="$1"
