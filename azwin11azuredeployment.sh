@@ -59,8 +59,8 @@ configure_nsg_rules() {
     az network nsg rule create \
         --resource-group "$resource_group" \
         --nsg-name "$nsg_name" \
-        --name DenyAllInbound \
-        --priority 1000 \
+        --name DenyAllIn\
+        --priority 10000 \
         --direction Inbound \
         --access Deny \
         --protocol "*" \
