@@ -40,7 +40,6 @@ You can allow access for both your current public IP and an additional range usi
 ```
 
 In this example, RDP and SSH will be accessible from:
-- Your current public IP (e.g., `203.0.113.45/32`)
 - The specified IP range `198.51.100.10/32`
 
 
