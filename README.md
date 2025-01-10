@@ -1,29 +1,77 @@
-# azwin11azuredeployment
+# Azure Windows 11 Deployment Script
 
-# RDP Azure Deployment Script  
-
-## Introduction  
-This script is a powerful automation written in **Bash** that handles a quick and secure deployment of a new **Windows 11 virtual machine (VM)** on Azure and establishes an connection to the VM. 
-
+## Overview
+This repository contains the `azwin11azuredeployment.sh` script, which simplifies the deployment of a Windows 11 Azure virtual machine. The script ensures that only specific IP addresses can access the VM via RDP and SSH. By default, your current public IP is used for access, and additional ranges can be specified as needed.
 
 ---
 
-## Prerequisites  
-Before using this script, ensure the following:  
-1. **Azure CLI** is installed and configured with appropriate permissions.
-2. Azure Azure Cloud Shell (bash) from Azure Portal instead is possible
-3. A **Windows Remote Desktop (RDP)** client is installed on your local machine.  
+## Features
+- Automatically detects your current public IP and grants access for RDP and SSH.
+- Option to specify additional IP ranges using the `-r` flag.
+- Automatically deletes old resource groups created by the script to maintain a clean Azure environment.
 
 ---
 
-## How to Use  
+## Usage
+### Basic Usage
+Run the script to create a new Windows VM accessible only from your current public IP:
 
-### **PowerShell**  
-Run the following commands in your terminal to deploy and connect to the Windows 11 VM:  
-
-```powershell
-az login --use-device-code
-git clone https://github.com/crtvrffnrt/azwin11azuredeployment.git
-cd azrdpconnect
-.\azrdpconnect.ps1
+```bash
+./azwin11azuredeployment.sh
 ```
+
+This will allow RDP and SSH access for your current public IP only (e.g., `203.0.113.45/32`).
+
+### Specify Additional IP Ranges
+You can allow access for both your current public IP and an additional range using the `-r` flag:
+
+```bash
+./azwin11azuredeployment.sh -r "198.51.100.10/32"
+```
+
+In this example, RDP and SSH will be accessible from:
+- Your current public IP (e.g., `203.0.113.45/32`)
+- The specified IP range `198.51.100.10/32`
+
+### Another Example
+To allow access for your current public IP and another range (e.g., `192.0.2.0/24`):
+
+```bash
+./azwin11azuredeployment.sh -r "192.0.2.0/24"
+```
+
+Access will be granted to:
+- Your current public IP (e.g., `203.0.113.45/32`)
+- The range `192.0.2.0/24`
+
+---
+
+## Note on SSH Access
+By default, Windows virtual machines do not have SSH enabled. To access the VM via SSH:
+1. Enable the SSH feature on the Windows VM after deployment.
+2. Configure the Windows Firewall to allow SSH traffic.
+
+---
+
+## Prerequisites
+- Azure CLI installed and authenticated (`az login`).
+- Necessary permissions to create resource groups, virtual machines, and network security groups in Azure.
+
+---
+
+## Outputs
+After deployment, the script will display the following details:
+- **Public IP Address**: The public IP of the VM.
+- **Username**: `adminuser`
+- **Password**: A randomly generated password.
+- **Allowed IP Ranges**: IP ranges permitted to access RDP and SSH.
+
+---
+
+## Cleanup
+Old resource groups created by this script are automatically deleted to keep your Azure environment organized. If you wish to disable this behavior, modify the script accordingly.
+
+---
+
+## Disclaimer
+This script is provided "as-is" without warranty of any kind. Use at your own risk. Ensure proper security measures are in place when allowing access to your VM.
