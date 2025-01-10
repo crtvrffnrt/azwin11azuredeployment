@@ -33,18 +33,7 @@ In this example, RDP and SSH will be accessible from:
 - Your current public IP (e.g., `203.0.113.45/32`)
 - The specified IP range `198.51.100.10/32`
 
-### Another Example
-To allow access for your current public IP and another range (e.g., `192.0.2.0/24`):
 
-```bash
-./azwin11azuredeployment.sh -r "192.0.2.0/24"
-```
-
-Access will be granted to:
-- Your current public IP (e.g., `203.0.113.45/32`)
-- The range `192.0.2.0/24`
-
----
 
 ## Note on SSH Access
 By default, Windows virtual machines do not have SSH enabled. To access the VM via SSH:
@@ -65,6 +54,7 @@ After deployment, the script will display the following details:
 - **Username**: `adminuser`
 - **Password**: A randomly generated password.
 - **Allowed IP Ranges**: IP ranges permitted to access RDP and SSH.
+![image](https://github.com/user-attachments/assets/284ccf76-ca02-4c75-85c0-6ecc77cf6485)
 
 ---
 
