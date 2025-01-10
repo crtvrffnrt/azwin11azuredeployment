@@ -51,7 +51,7 @@ get_current_ip() {
 
 # Function to configure NSG rules
 configure_nsg_rules() {
-    local nsg_name="$1"
+    local nsg_name="azwin11-${random_suffix}"
     local resource_group="$2"
     local allowed_ips=("$3")
 
