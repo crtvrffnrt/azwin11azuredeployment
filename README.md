@@ -54,8 +54,6 @@ After deployment, the script will display the following details:
 - **Username**: `adminuser`
 - **Password**: A randomly generated password.
 - **Allowed IP Ranges**: IP ranges permitted to access RDP and SSH.
-![image](https://github.com/user-attachments/assets/284ccf76-ca02-4c75-85c0-6ecc77cf6485)
-
 
 ---
 
@@ -68,7 +66,7 @@ cmdkey /generic:"$PublicIp" /user:"adminuser" /pass:"$pass"; mstsc /v:$publicip
 
 Linux
 ```bash
-xfreerdp /v:13.84.245.178 /u:adminuser /p:brf.5c2U)yQH33_-)*D=9ZQB /cert:ignore
+xfreerdp /v:13.84.245.178 /u:adminuser /p:"brf.5c2U)yQH33_-)*D=9ZQB" /cert:ignore
 ```
 
 ## Cleanup
