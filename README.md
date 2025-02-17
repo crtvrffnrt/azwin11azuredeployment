@@ -16,7 +16,7 @@ This repository contains the `azwin11azuredeployment.sh` script, which simplifie
 ## How to Use
 ### Bash
 ```
-az login --use-device-code && git clone https://github.com/crtvrffnrt/azwin11azuredeployment.git && chmod +x ./azsshconnect/azsshconnect.sh && ./azwin11azuredeployment/azwin11azuredeployment.sh -r "$yourPublicip/32"
+az login --use-device-code && git clone https://github.com/crtvrffnrt/azwin11azuredeployment.git && chmod +x ./azwin11azuredeployment/azwin11azuredeployment.sh && ./azwin11azuredeployment/azwin11azuredeployment.sh -r "$yourPublicip/32"
 ```
 Run the script to create a new Windows VM accessible only from your current public IP:
 
