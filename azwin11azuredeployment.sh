@@ -148,7 +148,7 @@ main() {
         --resource-group "$resource_group" \
         --name "$vm_name" \
         --nsg "$nsg_name" \
-        --image "MicrosoftWindowsDesktop:windows11preview:win11-24h2-ent:latest" \
+        --image "MicrosoftWindowsDesktop:windows-11:win11-24h2-ent:latest" \
         --admin-username "adminuser" \
         --admin-password "$admin_password" \
         --public-ip-sku Standard > /dev/null
